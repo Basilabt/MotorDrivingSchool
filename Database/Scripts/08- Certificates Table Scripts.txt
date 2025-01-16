@@ -1,0 +1,45 @@
+
+
+--> Create Certificate View:
+
+CREATE VIEW Certificates_View
+AS
+SELECT Certificates.CertificateID , dbo.FN_GetPersonFullNameByPersonID(People.PersonID) AS Fullname , Certificates.IssueDate
+FROM Certificates INNER JOIN Courses ON Certificates.CourseID = Courses.CourseID INNER JOIN Trainees ON Courses.TraineeID = Trainees.TraineeID INNER JOIN People ON People.PersonID = Trainees.PersonID;
+
+
+
+--> SP Get Certificates
+
+
+CREATE PROCEDURE SP_GetCertificates
+AS
+BEGIN
+
+	SELECT *
+	FROM Certificates_View;
+
+END 
+
+
+--> Issue Certificate Trigger, works when course remaining hours becomes zero:
+
+CREATE TRIGGER trg_AfterCourseUpdate
+ON Courses
+AFTER UPDATE
+AS
+BEGIN
+
+	DECLARE @NumberOfRemainingHours FLOAT;
+	SELECT @NumberOfRemainingHours =  RemainingHours FROM inserted;
+
+	IF @NumberOfRemainingHours = 0
+	BEGIN
+		
+		INSERT 
+		INTO Certificates(CourseID,IssueDate)
+		SELECT CourseID , CAST(GETDATE() AS DATE) FROM inserted;
+
+	END
+
+END

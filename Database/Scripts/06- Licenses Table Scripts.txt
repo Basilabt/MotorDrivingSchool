@@ -1,0 +1,13 @@
+
+
+
+-- SP Get Licenses:
+
+CREATE PROCEDURE SP_GetLicenses
+AS
+BEGIN
+
+	SELECT *
+	FROM Licenses;
+
+END

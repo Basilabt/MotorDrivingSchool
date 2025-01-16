@@ -1,0 +1,95 @@
+
+
+---> Coaches View:
+
+CREATE VIEW Coaches_View
+AS
+SELECT Coaches.CoachID , People.FirstName + ' ' + People.SecondName + ' ' + People.ThirdName + ' ' + People.LastName AS Fullname , 
+   CASE People.Gender
+           WHEN 1 THEN 'Male'
+           ELSE 'Female'
+       END AS Gender
+, People.PhoneNumber , People.Email , People.BirthDate
+FROM Coaches INNER JOIN People ON Coaches.PersonID = People.PersonID;
+
+
+---> SP Get Coaches:
+
+
+CREATE PROCEDURE SP_GetAllCoaches
+AS
+BEGIN
+
+	SELECT * 
+	FROM Coaches_View
+	ORDER BY Coaches_View.Fullname ASC;
+
+END
+
+
+
+---> SP Get Coach By CoachID: 
+
+
+CREATE PROCEDURE SP_GetAllCoaches
+AS
+BEGIN
+
+	SELECT * 
+	FROM Coaches_View
+	ORDER BY Coaches_View.Fullname ASC;
+
+END
+
+
+
+
+----> SP Delete Coach By Coach ID:
+
+
+CREATE PROCEDURE SP_DeleteCoachByCoachID 
+	@CoachID INT
+AS
+BEGIN
+
+	DELETE 
+	FROM Coaches
+	WHERE Coaches.CoachID = @CoachID;
+
+END 
+
+
+
+---> Trigger Delete Person After Deleting Coach:
+
+CREATE TRIGGER TRG_AfterCoachDelete
+ON Coaches
+AFTER DELETE
+AS
+BEGIN
+
+	DELETE 
+	FROM People INNER JOIN DELETED d ON People.PersonID = d.PersonID;
+
+END 
+
+
+----> SP Add New Coach:
+
+CREATE PROCEDURE SP_AddNewCoach
+	@PersonID INT 
+AS
+BEGIN
+
+	INSERT 
+	INTO Coaches(PersonID)
+	VALUES(@PersonID);
+
+	SELECT SCOPE_IDENTITY();
+
+END
+
+
+
+
+

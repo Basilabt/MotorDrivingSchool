@@ -1,0 +1,96 @@
+
+----> SP Get Person By Person ID
+
+CREATE PROCEDURE SP_GetPersonByPersonID
+	@PersonID INT 
+AS
+BEGIN
+
+	SELECT *
+	FROM People
+	WHERE People.PersonID = @PersonID;
+
+END
+
+
+-----> SP Add New Person:
+
+CREATE PROCEDURE SP_AddNewPerson
+    @FirstName NVARCHAR(50),
+    @SecondName NVARCHAR(50),
+    @ThirdName NVARCHAR(50),
+    @LastName NVARCHAR(50),
+    @Gender BIT,
+    @BirthDate DATETIME,
+    @PhoneNumber NVARCHAR(15),
+    @Email NVARCHAR(100),
+    @ImagePath NVARCHAR(255),
+    @NewPersonID INT OUTPUT
+AS
+BEGIN
+    INSERT INTO People (FirstName, SecondName, ThirdName, LastName, Gender, BirthDate, PhoneNumber, Email, ImagePath)
+    VALUES (@FirstName, @SecondName, @ThirdName, @LastName, @Gender, @BirthDate, @PhoneNumber, @Email, @ImagePath);
+
+    SET @NewPersonID = SCOPE_IDENTITY();
+END;
+
+
+
+
+
+----> SP Update Person:
+
+ CREATE PROCEDURE SP_UpdatePerson
+	@PersonID  INT ,
+   @FirstName NVARCHAR(50),
+    @SecondName NVARCHAR(50),
+    @ThirdName NVARCHAR(50),
+    @LastName NVARCHAR(50),
+    @Gender BIT,
+    @BirthDate DATETIME,
+    @PhoneNumber NVARCHAR(15),
+    @Email NVARCHAR(100),
+    @ImagePath NVARCHAR(255)
+AS
+BEGIN
+	
+	UPDATE 
+	People
+	SET 
+	FirstName = @FirstName,
+        SecondName = @SecondName,
+        ThirdName = @ThirdName,
+        LastName = @LastName,
+        Gender = @Gender,
+        BirthDate = @BirthDate,
+        PhoneNumber = @PhoneNumber,
+        Email = @Email,
+        ImagePath = @ImagePath
+	WHERE People.PersonID = @PersonID;
+
+
+END
+
+
+-----> FUNC Get Person FullName:
+
+CREATE FUNCTION FN_GetPersonFullNameByPersonID
+(
+	@PersonID INT
+)
+RETURNS NVARCHAR(255)
+AS
+BEGIN
+
+	DECLARE @FullName NVARCHAR(255);
+
+
+	SELECT @FullName = CONCAT(FirstName,' ',SecondName,' ',ThirdName,' ',LastName)
+	FROM People
+	WHERE PersonID = @PersonID;
+
+
+	RETURN @FullName;
+
+END
+

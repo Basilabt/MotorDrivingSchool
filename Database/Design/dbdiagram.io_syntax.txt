@@ -1,0 +1,75 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table People {
+  PersonID    INT [primary key]
+  FirstName   NVARCHAR 
+  SecondName  NVARCHAR
+  ThirdName   NVARCHAR
+  LastName    NVARCHAR 
+  Gender      BIT 
+  BirthDate   DATE
+  PhoneNumber NVARCHAR 
+  Email       NVARCHAR 
+  ImagePath   NVARCHAR
+}
+
+
+Table Coaches {
+  CoachID   INT [primary key]
+  PersonID  INT
+}
+
+Table Trainees {
+  TraineeID INT [primary key]
+  PersonID INT 
+}
+
+Table Licenses {
+    LicenseID INT [primary key]
+    LicenseType INT 
+    Description NVARCHR
+}
+
+Table Admins {
+  AdminID  INT [primary key]
+  PersonID INT
+  Username NVARCHAR 
+  Password NVARCAHR 
+  IsActive BIT
+}
+
+TABLE Courses {
+  CourseID INT [primary key]
+  CoachID INT 
+  TraineeID INT 
+  LicenseID INT 
+  RemainingHours FLOAT
+}
+
+Table Certificates {
+    CertificateID INT [primary key]
+    CourseID      INT
+    IssueDate     DATE
+}
+
+
+Table Motors {
+  MotorID INT [primary key]
+  ChassisNumber NVARCHAR 
+  Model NVHARCHAR 
+  EngineCapacity NVARCHAR 
+  ImagePath MVARVCHAR
+}
+
+
+Ref: Coaches.PersonID - People.PersonID 
+Ref: Trainees.PersonID - People.PersonID 
+Ref: Admins.PersonID - People.PersonID
+
+Ref: Courses.TraineeID > Trainees.TraineeID
+Ref: Courses.CoachID > Coaches.CoachID
+Ref: Courses.LicenseID - Licenses.LicenseID
+
+
+Ref: Certificates.CourseID - Courses.CourseID

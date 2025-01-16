@@ -1,0 +1,146 @@
+
+--> Creating Courses View:
+
+SELECT 
+    Courses.CourseID,
+    CONCAT(TraineePerson.FirstName, ' ', TraineePerson.LastName) AS TraineeName,
+    CONCAT(CoachPerson.FirstName, ' ', CoachPerson.LastName) AS CoachName,
+    Licenses.Description AS LicenseDescription
+FROM 
+    Courses
+INNER JOIN 
+    Trainees ON Courses.TraineeID = Trainees.TraineeID
+INNER JOIN 
+    People AS TraineePerson ON Trainees.PersonID = TraineePerson.PersonID
+INNER JOIN 
+    Coaches ON Courses.CoachID = Coaches.CoachID
+INNER JOIN 
+    People AS CoachPerson ON Coaches.PersonID = CoachPerson.PersonID
+INNER JOIN 
+    Licenses ON Courses.LicenseID = Licenses.LicenseID;
+
+
+
+
+--> SP Add New Course:
+
+CREATE PROCEDURE SP_AddNewCourse
+	@CoachID		 INT ,
+	@TraineeID		 INT ,
+	@LicenseID		 INT ,
+	@RemainingHours  FLOAT
+AS
+BEGIN
+
+	INSERT 
+	INTO Courses(CoachID,TraineeID,LicenseID,RemainingHours)
+	VALUES(@CoachID,@TraineeID,@LicenseID,@RemainingHours);
+
+	SELECT SCOPE_IDENTITY();
+
+END
+
+
+
+--> SP Get All Courses:
+
+CREATE PROCEDURE SP_GetAllCourses
+
+AS
+BEGIN
+	SELECT *
+	FROM Courses_View;
+
+END 
+
+
+
+
+--> SP Delete Course By Course ID:
+
+CREATE PROCEDURE SP_DeleteCourseByCourseID
+    @CourseID INT
+AS
+BEGIN
+    DELETE 
+    FROM Courses
+    WHERE Courses.CourseID = @CourseID;
+END
+
+
+--> SP Get Course By ID:
+
+
+CREATE PROCEDURE SP_GetCourseByCourseID
+	@CourseID INT
+AS
+BEGIN
+
+	SELECT * 
+	FROM Courses
+	WHERE Courses.CourseID = @CourseID;
+
+END
+
+
+
+--> SP Get Course By Trainee Phone Number:
+
+CREATE PROCEDURE SP_GetCourseByTraineePhoneNumber
+	@PhoneNumber NVARCHAR(100)
+AS
+BEGIN
+
+	SELECT Courses.CourseID , Courses.CoachID , Courses.TraineeID , Courses.LicenseID , Courses.RemainingHours
+	FROM Courses INNER JOIN Trainees ON Courses.TraineeID = Trainees.TraineeID INNER JOIN People ON People.PersonID = Trainees.PersonID
+	WHERE People.PhoneNumber = @PhoneNumber;
+
+END
+
+
+
+
+
+--> SP Update Course Info:
+
+
+CREATE PROCEDURE SP_UpdateCourseInfo
+		@CourseID		INT ,
+		@CoachID		INT ,
+		@TraineeID		INT ,
+		@LicenseID		INT ,
+		@RemainingHours FLOAT
+		
+AS
+BEGIN
+
+	UPDATE Courses
+	SET CoachID		   = @CoachID    , 
+		TraineeID	   = @TraineeID  ,
+		LicenseID	   = @LicenseID  ,
+		RemainingHours = @RemainingHours
+	WHERE CourseID = @CourseID;
+
+END
+
+--> Trigger After Course Hours End, Issue A Certificate
+
+CREATE TRIGGER trg_AfterCourseUpdate
+ON Courses
+AFTER UPDATE
+AS
+BEGIN
+
+	DECLARE @NumberOfRemainingHours FLOAT;
+	SELECT @NumberOfRemainingHours =  RemainingHours FROM inserted;
+
+	IF @NumberOfRemainingHours = 0
+	BEGIN
+		
+		INSERT 
+		INTO Certificates(CourseID,IssueDate)
+		SELECT CourseID , CAST(GETDATE() AS DATE) FROM inserted;
+
+	END
+
+END

@@ -1,0 +1,127 @@
+
+
+
+----> Motors View Script:
+
+
+CREATE VIEW Motors_View
+AS
+SELECT Motors.MotorID , Motors.Model , CAST(Motors.EngineCapacity AS NVARCHAR) + ' cc' AS Capacity , 
+
+CASE  
+	WHEN Motors.EngineCapacity < 600 THEN 'Normal'
+	ELSE 'Super Sport'
+END AS Category
+, Motors.ChassisNumber , Motors.ImagePath
+
+FROM Motors;
+
+
+----> SP Get All Motors:
+
+
+CREATE PROCEDURE SP_GetAllMotors 
+AS
+BEGIN
+
+	SELECT *
+	FROM Motors_View
+	ORDER BY Motors_View.Model;
+
+END
+
+
+----> SP Get Motors Models:
+
+CREATE PROCEDURE SP_GetMotorsModels
+AS
+BEGIN 
+
+	SELECT DISTINCT Model
+	FROM Motors
+	ORDER BY Model ASC;
+
+END 
+
+
+----> SP Get Motors Chassis:
+
+
+CREATE PROCEDURE SP_GetMotorsChassisNumbers
+AS
+BEGIN
+
+	SELECT ChassisNumber
+	FROM Motors
+	ORDER BY ChassisNumber ASC;
+
+END
+
+
+----> SP Delete Motor By Chassis Number:
+
+CREATE PROCEDURE SP_DeleteMotorByChassisNumber
+	@ChassisNumber NVARCHAR(200)
+AS
+BEGIN
+
+	DELETE 
+	FROM Motors
+	WHERE Motors.ChassisNumber = @ChassisNumber;
+
+END
+
+
+
+-----> SP Get Motor By Chassis Number:
+
+
+CREATE PROCEDURE SP_GetMotorByChassisNumber
+	@ChassisNumber NVARCHAR(200)
+AS
+BEGIN
+
+	SELECT *
+	FROM Motors
+	WHERE Motors.ChassisNumber = @ChassisNumber;
+
+END
+
+
+-----> SP Add New Motor:
+
+
+CREATE PROCEDURE SP_AddNewMotor
+	@ChassisNumber  NVARCHAR(100) ,
+	@Model		    NVARCHAR(200) ,
+	@EngineCapacity INT			  ,
+	@ImagePath	    NVARCHAR(100) 
+AS
+BEGIN
+
+	INSERT INTO 
+	Motors(ChassisNumber,Model,EngineCapacity,ImagePath)
+	VALUES(@ChassisNumber,@Model,@EngineCapacity,@ImagePath);
+
+END
+
+
+-----> SP Update Motor:
+
+
+CREATE PROCEDURE SP_UpdateMotor
+	@MotorID	     INT,
+	@ChassisNumber   NVARCHAR(100),
+	@Model		     NVARCHAR(100),
+	@EngineCapacity  INT,
+	@ImagePath		 NVARCHAR(100)
+AS
+BEGIN
+	
+	UPDATE Motors
+	SET ChassisNumber = @ChassisNumber , Model = @Model , EngineCapacity = @EngineCapacity , ImagePath = @ImagePath		
+	WHERE MotorID = @MotorID;
+
+END
+
+

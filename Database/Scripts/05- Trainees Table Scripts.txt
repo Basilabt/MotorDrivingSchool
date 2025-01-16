@@ -1,0 +1,75 @@
+
+
+--> SP Add New Trainee
+
+CREATE PROCEDURE SP_AddNewTrainee
+	@PersonID INT 
+AS
+BEGIN
+
+	INSERT 
+	INTO Trainees(PersonID)
+	VALUES(@PersonID);
+
+	SELECT SCOPE_IDENTITY();
+
+END
+
+
+
+--> SP Get Trainee By ID:
+
+CREATE PROCEDURE SP_GetTraineeByPersonID
+	@PersonID INT
+AS
+BEGIN
+
+	SELECT *
+	FROM Trainees
+	WHERE Trainees.PersonID = @PersonID;
+
+END
+
+
+---> SP Get All Trainees:
+
+CREATE PROCEDURE SP_GetAllTrainees 
+
+AS
+BEGIN
+
+	SELECT Trainees.TraineeID , dbo.FN_GetPersonFullNameByPersonID(People.PersonID) AS FullName , Licenses.Description AS License
+	FROM Trainees INNER JOIN People ON Trainees.PersonID = People.PersonID INNER JOIN Courses ON Courses.TraineeID = Trainees.TraineeID INNER JOIN Licenses ON Licenses.LicenseID = Courses.LicenseID;
+
+END
+
+
+
+---> SP Does Trainee Exist By PhoneNumber:
+
+CREATE PROCEDURE SP_DoesTraineeExistByPhoneNumber
+	@PhoneNumber NVARCHAR(100)
+AS
+BEGIN
+
+	SELECT IsFound = 1
+	FROM Trainees INNER JOIN People ON Trainees.PersonID = People.PersonID 
+	WHERE People.PhoneNumber = @PhoneNumber;
+
+END
+
+
+--> SP Get Trainee By Trainee ID:
+
+
+CREATE PROCEDURE SP_GetTraineeByPersonID
+	@PersonID INT
+AS
+BEGIN
+
+	SELECT *
+	FROM Trainees
+	WHERE Trainees.PersonID = @PersonID;
+
+END
+

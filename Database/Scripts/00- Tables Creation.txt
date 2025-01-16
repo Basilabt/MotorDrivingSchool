@@ -1,0 +1,116 @@
+
+
+
+CREATE DATABASE	MotorDrivingSchool_DB;
+
+USE MotorDrivingSchool_DB;
+
+
+
+
+
+CREATE TABLE People 
+(
+	PersonID INT PRIMARY KEY IDENTITY(1,1) ,
+	FirstName	NVARCHAR(100) NOT NULL ,
+	SecondName	NVARCHAR(100) NOT NULL , 
+	ThirdName	NVARCHAR(100) NOT NULL ,
+	LastName	NVARCHAR(100) NOT NULL ,
+	Gender		BIT			  NOT NULL ,
+	BirthDate	DATE		  NOT NULL , 
+	PhoneNUmber	NVARCHAR(100) NOT NULL ,
+	Email		NVARCHAR(100) NOT NULL ,
+	ImagePath	NVARCHAR 
+
+)
+
+
+CREATE TABLE Admins
+(
+	AdminID  INT PRIMARY KEY IDENTITY(1,1) ,
+	PersonID INT		   NOT NULL ,
+	Username NVARCHAR(100) NOT NULL ,
+	Password NVARCHAR(100) NOT NULL ,
+	IsActive BIT NOT NULL ,
+
+	CONSTRAINT AdminsFK_PersonID FOREIGN KEY (PersonID) REFERENCES People(PersonID)
+)
+
+
+
+
+CREATE TABLE Coaches
+(
+	CoachID	 INT PRIMARY KEY IDENTITY (1,1) ,
+	PersonID INT NOT NULL ,
+
+	CONSTRAINT CoachesFK_PersonID FOREIGN KEY (PersonID) REFERENCES People(PersonID)
+)
+
+
+CREATE TABLE Trainees 
+(
+	TraineeID INT PRIMARY KEY IDENTITY (1,1) ,
+	PersonID  INT NOT NULL ,
+
+	CONSTRAINT TraineesFK_PersonID FOREIGN KEY (PersonID) REFERENCES People(PersonID)
+)
+
+
+
+CREATE TABLE Motors 
+(
+	MotorID		   INT PRIMARY KEY IDENTITY(1,1),
+	ChassisNumber  NVARCHAR(100) NOT NULL ,
+	Model		   NVARCHAR(200) NOT NULL ,
+	EngineCapacity INT NOT NULL ,
+	ImagePath	   NVARCHAR(100) NOT NULL
+)
+
+
+
+
+CREATE TABLE Licenses
+(
+	LicenseID   INT PRIMARY KEY IDENTITY(1,1) , 
+	LicenseType INT NOT NULL , 
+	Description NVARCHAR(200) NOT NULL 
+
+)
+
+
+
+
+CREATE TABLE Courses
+(
+	CourseID INT PRIMARY KEY IDENTITY(1,1) , 
+	CoachID INT NOT NULL , 
+	TraineeID INT NOT NULL , 
+	LicenseID INT NOT NULL , 
+	RemainingHours FLOAT NOT NULL , 
+
+
+	CONSTRAINT FK1_Courses_CoachID    FOREIGN KEY (CoachID)   REFERENCES Coaches(CoachID) , 
+	CONSTRAINT FK2_Courses_TraineeID  FOREIGN KEY (TraineeID) REFERENCES Trainees(TraineeID) , 
+	CONSTRAINT FK3_Courses_LicenseID  FOREIGN KEY (LicenseID) REFERENCES Licenses(LicenseID)
+)
+
+
+
+
+
+
+
+
+CREATE TABLE Certificates 
+(
+
+	CertificateID INT PRIMARY KEY IDENTITY(1,1) , 
+	CourseID INT NOT NULL ,
+	IssueDate DATE NOT NULL ,
+
+	CONSTRAINT FK_Certificates_CourseID FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+)
+
+
+

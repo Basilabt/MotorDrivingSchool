@@ -1,0 +1,32 @@
+----> SP Is Admin Account Active
+
+CREATE PROCEDURE SP_IsAdminAccountActive
+	@Username NVARCHAR(100)
+AS
+BEGIN
+
+	SELECT IsActive = 1 
+	FROM Admins
+	WHERE Admins.Username = @Username AND Admins.IsActive = 1;
+
+END
+
+
+
+----> SP Login
+
+PROCEDURE SP_Login
+	@Username NVARCHAR(100),
+	@Password NVARCHAR(100)
+AS
+BEGIN
+
+	SELECT * 
+	FROM Admins
+	WHERE Admins.Username = @Username AND Admins.Password = @Password;
+
+END
+
+
+
+----> 
